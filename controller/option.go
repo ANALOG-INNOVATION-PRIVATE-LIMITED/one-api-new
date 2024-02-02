@@ -2,11 +2,12 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+	"strings"
+
 	"github.com/songquanpeng/one-api/common/config"
 	"github.com/songquanpeng/one-api/common/helper"
 	"github.com/songquanpeng/one-api/model"
-	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,7 +60,7 @@ func UpdateOption(c *gin.Context) {
 			return
 		}
 	case "DiscordOAuthEnabled":
-		if option.Value == "true" && common.DiscordClientId == "" {
+		if option.Value == "true" && config.DiscordClientId == "" {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
 				"message": "无法启用 Discord OAuth，请先填入 Discord Client ID 以及 Discord Client Secret！",
@@ -83,7 +84,7 @@ func UpdateOption(c *gin.Context) {
 			return
 		}
 	case "GoogleOAuthEnabled":
-		if option.Value == "true" && common.GoogleClientId == "" {
+		if option.Value == "true" && config.GoogleClientId == "" {
 			c.JSON(http.StatusOK, gin.H{
 				"success": false,
 				"message": "无法启用 Google OAuth，请先填入 Google Client ID 以及 Google Client Secret！",
