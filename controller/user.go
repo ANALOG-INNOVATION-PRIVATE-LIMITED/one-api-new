@@ -3,13 +3,14 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/config"
 	"github.com/songquanpeng/one-api/common/helper"
 	"github.com/songquanpeng/one-api/model"
-	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -267,7 +268,6 @@ func GetUserDashboard(c *gin.Context) {
 		"message": "",
 		"data":    dashboards,
 	})
-	return
 }
 
 func GenerateAccessToken(c *gin.Context) {

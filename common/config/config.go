@@ -117,7 +117,6 @@ var GeminiSafetySetting = helper.GetOrDefaultEnvString("GEMINI_SAFETY_SETTING", 
 var Theme = helper.GetOrDefaultEnvString("THEME", "default")
 var ValidThemes = map[string]bool{
 	"default": true,
-	"berry":   true,
 }
 
 // All duration's unit is seconds

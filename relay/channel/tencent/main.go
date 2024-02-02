@@ -8,17 +8,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"sort"
+	"strconv"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/helper"
 	"github.com/songquanpeng/one-api/common/logger"
 	"github.com/songquanpeng/one-api/relay/channel/openai"
 	"github.com/songquanpeng/one-api/relay/constant"
-	"io"
-	"net/http"
-	"sort"
-	"strconv"
-	"strings"
 )
 
 // https://cloud.tencent.com/document/product/1729/97732
@@ -191,6 +192,9 @@ func Handler(c *gin.Context, resp *http.Response) (*openai.ErrorWithStatusCode, 
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(resp.StatusCode)
 	_, err = c.Writer.Write(jsonResponse)
+	if err != nil {
+		return openai.ErrorWrapper(err, "write_response_body_failed", http.StatusInternalServerError), nil
+	}
 	return nil, &fullTextResponse.Usage
 }
 
@@ -224,7 +228,7 @@ func GetSign(req ChatRequest, secretKey string) string {
 	messageStr = strings.TrimSuffix(messageStr, ",")
 	params = append(params, "messages=["+messageStr+"]")
 
-	sort.Sort(sort.StringSlice(params))
+	sort.Strings(params)
 	url := "hunyuan.cloud.tencent.com/hyllm/v1/chat/completions?" + strings.Join(params, "&")
 	mac := hmac.New(sha1.New, []byte(secretKey))
 	signURL := url

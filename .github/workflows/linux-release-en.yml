@@ -26,8 +26,8 @@ jobs:
           CI: ""
         run: |
           cd web
-          npm ci
-          REACT_APP_VERSION=$(git describe --tags) npm run build
+          git describe --tags > VERSION
+          REACT_APP_VERSION=$(git describe --tags) chmod u+x ./build.sh && ./build.sh
           cd ..
       - name: Set up Go
         uses: actions/setup-go@v4
