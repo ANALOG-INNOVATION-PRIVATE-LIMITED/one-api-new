@@ -28,7 +28,7 @@ jobs:
           CI: ""
         run: |
           cd web
-          REACT_APP_VERSION=$(git describe --tags) chmod u+x ./build.sh && ./build.sh
+          REACT_APP_VERSION=$(git describe --tags) chmod u+x ./build.sh && ./build.sh --lint
           cd ..
           
       - name: golangci-lint
