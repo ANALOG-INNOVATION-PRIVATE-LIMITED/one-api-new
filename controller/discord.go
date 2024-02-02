@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"one-api/common"
-	"one-api/model"
 	"strconv"
+
+	"github.com/songquanpeng/one-api/common"
+	"github.com/songquanpeng/one-api/common/config"
+	"github.com/songquanpeng/one-api/model"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -42,16 +44,16 @@ func getDiscordUserInfoByCode(codeFromURLParamaters string, host string) (*Disco
 
 	url := "client_id=%s&client_secret=%s&grant_type=authorization_code&redirect_uri=%s/oauth/discord&code=%s&scope=identify"
 
-	if common.DiscordGuildCheckEnabled {
+	if config.DiscordGuildCheckEnabled {
 		url = url + "%20guilds"
 	}
 
-	if common.DiscordMemberRoleCheckEnabled {
+	if config.DiscordMemberRoleCheckEnabled {
 		url = url + "%20guilds.members.read"
 	}
 
 	accessTokenBody := bytes.NewBuffer([]byte(fmt.Sprintf(url,
-		common.DiscordClientId, common.DiscordClientSecret, common.ServerAddress, codeFromURLParamaters,
+		config.DiscordClientId, config.DiscordClientSecret, config.ServerAddress, codeFromURLParamaters,
 	)))
 
 	req, _ := http.NewRequest("POST",
@@ -110,7 +112,7 @@ func getDiscordUserInfoByCode(codeFromURLParamaters string, host string) (*Disco
 
 	defer resp.Body.Close()
 
-	if common.DiscordGuildId != "" && common.DiscordGuildCheckEnabled {
+	if config.DiscordGuildId != "" && config.DiscordGuildCheckEnabled {
 		var discordUserGuildsResponse []DiscordUserGuildsResponse
 
 		// Get User Info
@@ -140,7 +142,7 @@ func getDiscordUserInfoByCode(codeFromURLParamaters string, host string) (*Disco
 		joinedDiscordServer := false
 
 		for _, guild := range discordUserGuildsResponse {
-			if guild.Id == common.DiscordGuildId {
+			if guild.Id == config.DiscordGuildId {
 				joinedDiscordServer = true
 				break
 			}
@@ -150,9 +152,9 @@ func getDiscordUserInfoByCode(codeFromURLParamaters string, host string) (*Disco
 			return nil, errors.New("You are not in the Discord server!")
 		}
 
-		if common.DiscordMemberRoleId != "" && common.DiscordMemberRoleCheckEnabled {
+		if config.DiscordMemberRoleId != "" && config.DiscordMemberRoleCheckEnabled {
 			// /users/@me/guilds/{guild.id}/member
-			req, _ = http.NewRequest("GET", fmt.Sprintf("https://discord.com/api/users/@me/guilds/%s/member", common.DiscordGuildId), nil)
+			req, _ = http.NewRequest("GET", fmt.Sprintf("https://discord.com/api/users/@me/guilds/%s/member", config.DiscordGuildId), nil)
 
 			req.Header = http.Header{
 				"Content-Type":  []string{"application/json"},
@@ -180,7 +182,7 @@ func getDiscordUserInfoByCode(codeFromURLParamaters string, host string) (*Disco
 			isMember := false
 
 			for _, role := range discordUserGuildMemberResponse.Roles {
-				if role == common.DiscordMemberRoleId {
+				if role == config.DiscordMemberRoleId {
 					isMember = true
 					break
 				}
@@ -203,7 +205,7 @@ func DiscordOAuth(c *gin.Context) {
 		return
 	}
 
-	if !common.DiscordOAuthEnabled {
+	if !config.DiscordOAuthEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "管理员未开启通过 Discord 登录以及注册",
@@ -233,7 +235,7 @@ func DiscordOAuth(c *gin.Context) {
 			return
 		}
 	} else {
-		if common.RegisterEnabled {
+		if config.RegisterEnabled {
 			user.Username = "discord_" + strconv.Itoa(model.GetMaxUserId()+1)
 			if discordUser.Username != "" {
 				user.DisplayName = discordUser.Username
@@ -270,7 +272,7 @@ func DiscordOAuth(c *gin.Context) {
 }
 
 func DiscordBind(c *gin.Context) {
-	if !common.DiscordOAuthEnabled {
+	if !config.DiscordOAuthEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "管理员未开启通过 Discord 登录以及注册",

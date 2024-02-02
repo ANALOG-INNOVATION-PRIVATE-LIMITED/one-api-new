@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"one-api/common"
-	"one-api/model"
 	"strconv"
+
+	"github.com/songquanpeng/one-api/common"
+	"github.com/songquanpeng/one-api/common/config"
+	"github.com/songquanpeng/one-api/model"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -36,7 +38,7 @@ func getGoogleUserInfoByCode(codeFromURLParamaters string, host string) (*Google
 
 	accessTokenBody := bytes.NewBuffer([]byte(fmt.Sprintf(
 		"code=%s&client_id=%s&client_secret=%s&redirect_uri=%s/oauth/google&grant_type=authorization_code",
-		codeFromURLParamaters, common.GoogleClientId, common.GoogleClientSecret, common.ServerAddress,
+		codeFromURLParamaters, config.GoogleClientId, config.GoogleClientSecret, config.ServerAddress,
 	)))
 
 	req, _ := http.NewRequest("POST",
@@ -107,7 +109,7 @@ func GoogleOAuth(c *gin.Context) {
 		return
 	}
 
-	if !common.GoogleOAuthEnabled {
+	if !config.GoogleOAuthEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "管理员未开启通过 Google 登录以及注册",
@@ -137,7 +139,7 @@ func GoogleOAuth(c *gin.Context) {
 			return
 		}
 	} else {
-		if common.RegisterEnabled {
+		if config.RegisterEnabled {
 			user.Username = "google_" + strconv.Itoa(model.GetMaxUserId()+1)
 			if googleUser.Name != "" {
 				user.DisplayName = googleUser.Name
@@ -174,7 +176,7 @@ func GoogleOAuth(c *gin.Context) {
 }
 
 func GoogleBind(c *gin.Context) {
-	if !common.GoogleOAuthEnabled {
+	if !config.GoogleOAuthEnabled {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "管理员未开启通过 Google 登录以及注册",

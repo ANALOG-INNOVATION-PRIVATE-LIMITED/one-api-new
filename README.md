@@ -195,12 +195,12 @@ docker-compose ps
    git clone https://github.com/ckt1031/one-api.git
    
    # 构建前端
-   cd one-api/web
-   npm ci
+   cd one-api/web/default
+   npm install
    npm run build
    
    # 构建后端
-   cd ..
+   cd ../..
    go mod download
    go build -ldflags "-s -w" -o one-api
    ````
@@ -435,6 +435,9 @@ https://openai.justsong.cn
 8. 升级之前数据库需要做变更吗？
    + 一般情况下不需要，系统将在初始化的时候自动调整。
    + 如果需要的话，我会在更新日志中说明，并给出脚本。
+9. 手动修改数据库后报错：`数据库一致性已被破坏，请联系管理员`？
+   + 这是检测到 ability 表里有些记录的通道 id 是不存在的，这大概率是因为你删了 channel 表里的记录但是没有同步在 ability 表里清理无效的通道。
+   + 对于每一个通道，其所支持的模型都需要有一个专门的 ability 表的记录，表示该通道支持该模型。
 
 ## 相关项目
 * [FastGPT](https://github.com/labring/FastGPT): 基于 LLM 大语言模型的知识库问答系统

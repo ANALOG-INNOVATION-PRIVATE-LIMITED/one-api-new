@@ -1,11 +1,10 @@
 package router
 
 import (
-	"one-api/controller"
-	"one-api/middleware"
-
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
+	"github.com/songquanpeng/one-api/controller"
+	"github.com/songquanpeng/one-api/middleware"
 )
 
 func SetDashboardRouter(router *gin.Engine) {

@@ -5,19 +5,22 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"one-api/common"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/songquanpeng/one-api/common"
+	"github.com/songquanpeng/one-api/common/config"
+	"github.com/songquanpeng/one-api/common/logger"
 )
 
 var (
-	TokenCacheSeconds         = common.SyncFrequency
-	UserId2GroupCacheSeconds  = common.SyncFrequency
-	UserId2QuotaCacheSeconds  = common.SyncFrequency
-	UserId2StatusCacheSeconds = common.SyncFrequency
+	TokenCacheSeconds         = config.SyncFrequency
+	UserId2GroupCacheSeconds  = config.SyncFrequency
+	UserId2QuotaCacheSeconds  = config.SyncFrequency
+	UserId2StatusCacheSeconds = config.SyncFrequency
 )
 
 func CacheGetTokenByKey(key string) (*Token, error) {
@@ -43,7 +46,7 @@ func CacheGetTokenByKey(key string) (*Token, error) {
 		}
 		err = common.RedisSet(fmt.Sprintf("token:%s", key), string(jsonBytes), time.Duration(TokenCacheSeconds)*time.Second)
 		if err != nil {
-			common.SysError("Redis set token error: " + err.Error())
+			logger.SysError("Redis set token error: " + err.Error())
 		}
 		return &token, nil
 	}
@@ -63,7 +66,7 @@ func CacheGetUserGroup(id int) (group string, err error) {
 		}
 		err = common.RedisSet(fmt.Sprintf("user_group:%d", id), group, time.Duration(UserId2GroupCacheSeconds)*time.Second)
 		if err != nil {
-			common.SysError("Redis set user group error: " + err.Error())
+			logger.SysError("Redis set user group error: " + err.Error())
 		}
 	}
 	return group, err
@@ -81,7 +84,7 @@ func CacheGetUserQuota(id int) (quota int, err error) {
 		}
 		err = common.RedisSet(fmt.Sprintf("user_quota:%d", id), fmt.Sprintf("%d", quota), time.Duration(UserId2QuotaCacheSeconds)*time.Second)
 		if err != nil {
-			common.SysError("Redis set user quota error: " + err.Error())
+			logger.SysError("Redis set user quota error: " + err.Error())
 		}
 		return quota, err
 	}
@@ -128,7 +131,7 @@ func CacheIsUserEnabled(userId int) (bool, error) {
 	}
 	err = common.RedisSet(fmt.Sprintf("user_enabled:%d", userId), enabled, time.Duration(UserId2StatusCacheSeconds)*time.Second)
 	if err != nil {
-		common.SysError("Redis set user enabled error: " + err.Error())
+		logger.SysError("Redis set user enabled error: " + err.Error())
 	}
 	return userEnabled, err
 }
@@ -179,19 +182,19 @@ func InitChannelCache() {
 	channelSyncLock.Lock()
 	group2model2channels = newGroup2model2channels
 	channelSyncLock.Unlock()
-	common.SysLog("channels synced from database")
+	logger.SysLog("channels synced from database")
 }
 
 func SyncChannelCache(frequency int) {
 	for {
 		time.Sleep(time.Duration(frequency) * time.Second)
-		common.SysLog("syncing channels from database")
+		logger.SysLog("syncing channels from database")
 		InitChannelCache()
 	}
 }
 
 func CacheGetRandomSatisfiedChannel(group string, model string, stream bool) (*Channel, error) {
-	if !common.MemoryCacheEnabled {
+	if !config.MemoryCacheEnabled {
 		return GetRandomSatisfiedChannel(group, model, stream)
 	}
 	channelSyncLock.RLock()

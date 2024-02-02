@@ -1,4 +1,4 @@
-module one-api
+module github.com/songquanpeng/one-api
 
 // +heroku goVersion go1.21
 go 1.21

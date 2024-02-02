@@ -135,12 +135,12 @@ sudo service nginx restart
    git clone https://github.com/songquanpeng/one-api.git
 
    # フロントエンドのビルド
-   cd one-api/web
-   npm ci
+   cd one-api/web/default
+   npm install
    npm run build
 
    # バックエンドのビルド
-   cd ..
+   cd ../..
    go mod download
    go build -ldflags "-s -w" -o one-api
    ```
