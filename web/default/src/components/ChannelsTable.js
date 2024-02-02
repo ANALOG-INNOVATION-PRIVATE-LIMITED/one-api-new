@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Input, Label, Pagination, Popup, Message, Table } from 'semantic-ui-react';
+import { Button, Form, Input, Label, Pagination, Popup, Table } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { API, showError, showInfo, showSuccess, timestamp2string } from '../helpers';
 
