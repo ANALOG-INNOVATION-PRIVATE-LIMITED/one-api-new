@@ -283,15 +283,9 @@ const OperationSetting = () => {
               onChange={handleInputChange}
             />
             <Form.Checkbox
-<<<<<<< HEAD
-              checked={inputs.AutoReEnableFailedChannelEnabled === 'true'}
-              label='重新启用之前被自动禁用的故障通道'
-              name='AutoReEnableFailedChannelEnabled'
-=======
               checked={inputs.AutomaticEnableChannelEnabled === 'true'}
               label='成功时自动启用通道'
               name='AutomaticEnableChannelEnabled'
->>>>>>> upstream/main
               onChange={handleInputChange}
             />
           </Form.Group>

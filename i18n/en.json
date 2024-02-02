@@ -954,5 +954,11 @@
   "必须是有效的JSON字符串": "must be a valid JSON string",
   "流式和非流式不能同时关闭！": "Streaming and non-streaming cannot be turned off at the same time!",
   "自定义：点击或回车输入": "Custom: click or press Enter to enter",
-  "其他参数": "Other parameters"
+  "其他参数": "Other parameters",
+
+  "无法获取统计信息": "Unable to get statistics",
+  "无效的主题": "Invalid theme",
+  "模型倍率 %.2f，分组倍率 %.2f，补全倍率 %.2f": "Model rate %.2f, group rate %.2f, completion rate %.2f",
+  "请输入主题名称": "Please enter the theme name",
+  "补全倍率不是合法的 JSON 字符串": "The completion rate is not a valid JSON string"
 }
