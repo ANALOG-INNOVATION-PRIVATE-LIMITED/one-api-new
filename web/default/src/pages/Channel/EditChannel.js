@@ -18,7 +18,7 @@ function type2secretPrompt(type) {
     case 18:
       return '按照如下格式输入：APPID|APISecret|APIKey';
     case 22:
-      return '按照如下格式输入：APIKey-AppId，例如：fastgpt-0sp2gtvfdgyi4k30jwlgwf1i-64f335d84283f05518e9e041';
+      return '按照如下格式输入：APIKey-AppId，例如：fastgpt-xxxx-xxxx';
     case 23:
       return '按照如下格式输入：AppId|SecretId|SecretKey';
     default:
