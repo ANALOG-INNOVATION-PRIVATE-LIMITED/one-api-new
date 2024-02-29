@@ -191,7 +191,7 @@ func Handler(c *gin.Context, resp *http.Response) (*openai.ErrorWithStatusCode, 
 	c.Writer.WriteHeader(resp.StatusCode)
 	_, err = c.Writer.Write(jsonResponse)
 	if err != nil {
-		logger.SysError("error writing response: " + err.Error())
+		return openai.ErrorWrapper(err, "write_response_body_failed", http.StatusInternalServerError), nil
 	}
 	return nil, &fullTextResponse.Usage
 }
