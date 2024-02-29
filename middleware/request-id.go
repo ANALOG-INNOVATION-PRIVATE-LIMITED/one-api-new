@@ -13,7 +13,7 @@ func RequestId() func(c *gin.Context) {
 		type contextKey string
 		const requestIdKey contextKey = "X-Oneapi-Request-Id"
 
-		id := helper.GetTimeString() + helper.GetRandomString(8)
+		id := helper.GetTimeString() + helper.GetRandomNumberString(8)
 		c.Set(logger.RequestIdKey, id)
 		ctx := context.WithValue(c.Request.Context(), requestIdKey, id)
 		c.Request = c.Request.WithContext(ctx)

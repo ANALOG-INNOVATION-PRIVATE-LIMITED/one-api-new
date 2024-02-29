@@ -1,21 +1,20 @@
 package model
 
 import (
-	"github.com/songquanpeng/one-api/common"
 	"strings"
+
+	"github.com/songquanpeng/one-api/common"
 )
 
 type Ability struct {
-	Group             string `json:"group" gorm:"type:varchar(32);primaryKey;autoIncrement:false"`
-	Model             string `json:"model" gorm:"primaryKey;autoIncrement:false"`
-	ChannelId         int    `json:"channel_id" gorm:"primaryKey;autoIncrement:false;index"`
-	Enabled           bool   `json:"enabled"`
-	AllowStreaming    int    `json:"allow_streaming" gorm:"default:1"`
-	AllowNonStreaming int    `json:"allow_non_streaming" gorm:"default:1"`
-	Priority          *int64 `json:"priority" gorm:"bigint;default:0;index"`
+	Group     string `json:"group" gorm:"type:varchar(32);primaryKey;autoIncrement:false"`
+	Model     string `json:"model" gorm:"primaryKey;autoIncrement:false"`
+	ChannelId int    `json:"channel_id" gorm:"primaryKey;autoIncrement:false;index"`
+	Enabled   bool   `json:"enabled"`
+	Priority  *int64 `json:"priority" gorm:"bigint;default:0;index"`
 }
 
-func GetRandomSatisfiedChannel(group string, model string, stream bool) (*Channel, error) {
+func GetRandomSatisfiedChannel(group string, model string) (*Channel, error) {
 	ability := Ability{}
 	groupCol := "`group`"
 	trueVal := "1"
@@ -27,12 +26,6 @@ func GetRandomSatisfiedChannel(group string, model string, stream bool) (*Channe
 	var err error
 
 	cmdWhere := groupCol + " = ? and model = ? and enabled = " + trueVal
-
-	if stream {
-		cmdWhere += " and allow_streaming = 1"
-	} else {
-		cmdWhere += " and allow_non_streaming = 1"
-	}
 
 	maxPrioritySubQuery := DB.Model(&Ability{}).Select("MAX(priority)").Where(cmdWhere, group, model)
 	channelQuery := DB.Where(groupCol+" = ? and model = ? and enabled = "+trueVal+" and priority = (?)", group, model, maxPrioritySubQuery)
@@ -57,13 +50,11 @@ func (channel *Channel) AddAbilities() error {
 	for _, model := range models_ {
 		for _, group := range groups_ {
 			ability := Ability{
-				Group:             group,
-				Model:             model,
-				ChannelId:         channel.Id,
-				Enabled:           channel.Status == common.ChannelStatusEnabled,
-				AllowStreaming:    channel.AllowStreaming,
-				AllowNonStreaming: channel.AllowNonStreaming,
-				Priority:          channel.Priority,
+				Group:     group,
+				Model:     model,
+				ChannelId: channel.Id,
+				Enabled:   channel.Status == common.ChannelStatusEnabled,
+				Priority:  channel.Priority,
 			}
 			abilities = append(abilities, ability)
 		}

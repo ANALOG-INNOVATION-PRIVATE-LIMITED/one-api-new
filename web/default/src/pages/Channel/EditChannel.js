@@ -43,8 +43,6 @@ const EditChannel = () => {
     base_url: '',
     other: '',
     model_mapping: '',
-    allow_streaming: 1,
-    allow_non_streaming: 1,
     models: [],
     groups: ['default']
   };
@@ -84,7 +82,13 @@ const EditChannel = () => {
           localModels = ['chatglm_turbo', 'chatglm_pro', 'chatglm_std', 'chatglm_lite'];
           break;
         case 18:
-          localModels = ['SparkDesk'];
+          localModels = [
+            'SparkDesk',
+            'SparkDesk-v1.1',
+            'SparkDesk-v2.1',
+            'SparkDesk-v3.1',
+            'SparkDesk-v3.5'
+          ];
           break;
         case 19:
           localModels = ['360GPT_S2_V9', 'embedding-bert-512-v1', 'embedding_s1_v1', 'semantic_similarity_s1_v1'];
@@ -94,6 +98,9 @@ const EditChannel = () => {
           break;
         case 24:
           localModels = ['gemini-pro', 'gemini-pro-vision'];
+          break;
+        case 25:
+          localModels = ['moonshot-v1-8k', 'moonshot-v1-32k', 'moonshot-v1-128k'];
           break;
       }
       setInputs((inputs) => ({ ...inputs, models: localModels }));
@@ -191,11 +198,6 @@ const EditChannel = () => {
     }
     if (inputs.model_mapping !== '' && !verifyJSON(inputs.model_mapping)) {
       showInfo('模型映射必须是合法的 JSON 格式！');
-      return;
-    }
-    // allow streaming and allow non streaming cannot be both false
-    if (inputs.allow_streaming === 2 && inputs.allow_non_streaming === 2) {
-      showInfo('流式请求和非流式请求不能同时禁用！');
       return;
     }
     let localInputs = inputs;
@@ -428,26 +430,6 @@ const EditChannel = () => {
               value={inputs.model_mapping}
               style={{ minHeight: 150, fontFamily: 'JetBrains Mono, Consolas' }}
               autoComplete='new-password'
-            />
-          </Form.Field>
-          <Form.Field>
-            <Form.Checkbox
-              checked={inputs.allow_streaming === 1}
-              label='允许流式请求'
-              name='allow_streaming'
-              onChange={() => {
-                setInputs((inputs) => ({ ...inputs, allow_streaming: inputs.allow_streaming === 1 ? 2 : 1 }));
-              }}
-            />
-          </Form.Field>
-          <Form.Field>
-            <Form.Checkbox
-              checked={inputs.allow_non_streaming === 1}
-              label='允许非流式请求'
-              name='allow_non_streaming'
-              onChange={() => {
-                setInputs((inputs) => ({ ...inputs, allow_non_streaming: inputs.allow_non_streaming === 1 ? 2 : 1 }));
-              }}
             />
           </Form.Field>
           {

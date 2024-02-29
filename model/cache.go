@@ -96,7 +96,7 @@ func CacheUpdateUserQuota(id int) error {
 	if !common.RedisEnabled {
 		return nil
 	}
-	quota, err := GetUserQuota(id)
+	quota, err := CacheGetUserQuota(id)
 	if err != nil {
 		return err
 	}
@@ -193,9 +193,9 @@ func SyncChannelCache(frequency int) {
 	}
 }
 
-func CacheGetRandomSatisfiedChannel(group string, model string, stream bool) (*Channel, error) {
+func CacheGetRandomSatisfiedChannel(group string, model string) (*Channel, error) {
 	if !config.MemoryCacheEnabled {
-		return GetRandomSatisfiedChannel(group, model, stream)
+		return GetRandomSatisfiedChannel(group, model)
 	}
 	channelSyncLock.RLock()
 	defer channelSyncLock.RUnlock()
@@ -207,12 +207,7 @@ func CacheGetRandomSatisfiedChannel(group string, model string, stream bool) (*C
 	var filteredChannels []*Channel
 
 	for _, channel := range channels {
-		isStreaming := stream && channel.AllowStreaming == common.ChannelAllowStreamEnabled
-		isNotStreaming := !stream && channel.AllowNonStreaming == common.ChannelAllowNonStreamEnabled
-
-		if isStreaming || isNotStreaming {
-			filteredChannels = append(filteredChannels, channel)
-		}
+		filteredChannels = append(filteredChannels, channel)
 	}
 
 	endIdx := len(filteredChannels)
