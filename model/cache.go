@@ -204,23 +204,17 @@ func CacheGetRandomSatisfiedChannel(group string, model string) (*Channel, error
 		return nil, errors.New("channel not found")
 	}
 
-	var filteredChannels []*Channel
-
-	for _, channel := range channels {
-		filteredChannels = append(filteredChannels, channel)
-	}
-
-	endIdx := len(filteredChannels)
+	endIdx := len(channels)
 	// choose by priority
-	firstChannel := filteredChannels[0]
+	firstChannel := channels[0]
 	if firstChannel.GetPriority() > 0 {
-		for i := range filteredChannels {
-			if filteredChannels[i].GetPriority() != firstChannel.GetPriority() {
+		for i := range channels {
+			if channels[i].GetPriority() != firstChannel.GetPriority() {
 				endIdx = i
 				break
 			}
 		}
 	}
 	idx := rand.Intn(endIdx)
-	return filteredChannels[idx], nil
+	return channels[idx], nil
 }

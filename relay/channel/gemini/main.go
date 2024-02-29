@@ -178,16 +178,16 @@ func responseGeminiChat2OpenAI(response *ChatResponse) *openai.TextResponse {
 	return &fullTextResponse
 }
 
-func streamResponseGeminiChat2OpenAI(geminiResponse *ChatResponse) *openai.ChatCompletionsStreamResponse {
-	var choice openai.ChatCompletionsStreamResponseChoice
-	choice.Delta.Content = geminiResponse.GetResponseText()
-	choice.FinishReason = &constant.StopFinishReason
-	var response openai.ChatCompletionsStreamResponse
-	response.Object = "chat.completion.chunk"
-	response.Model = "gemini"
-	response.Choices = []openai.ChatCompletionsStreamResponseChoice{choice}
-	return &response
-}
+// func streamResponseGeminiChat2OpenAI(geminiResponse *ChatResponse) *openai.ChatCompletionsStreamResponse {
+// 	var choice openai.ChatCompletionsStreamResponseChoice
+// 	choice.Delta.Content = geminiResponse.GetResponseText()
+// 	choice.FinishReason = &constant.StopFinishReason
+// 	var response openai.ChatCompletionsStreamResponse
+// 	response.Object = "chat.completion.chunk"
+// 	response.Model = "gemini"
+// 	response.Choices = []openai.ChatCompletionsStreamResponseChoice{choice}
+// 	return &response
+// }
 
 func StreamHandler(c *gin.Context, resp *http.Response) (*model.ErrorWithStatusCode, string) {
 	responseText := ""

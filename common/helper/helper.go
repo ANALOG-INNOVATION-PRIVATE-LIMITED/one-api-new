@@ -174,7 +174,8 @@ func GetRandomString(length int) string {
 }
 
 func GetRandomNumberString(length int) string {
-	rand.Seed(time.Now().UnixNano())
+	s := rand.NewSource(time.Now().UnixNano())
+	rand.New(s)
 	key := make([]byte, length)
 	for i := 0; i < length; i++ {
 		key[i] = keyNumbers[rand.Intn(len(keyNumbers))]
