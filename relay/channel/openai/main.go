@@ -15,7 +15,7 @@ import (
 	"github.com/songquanpeng/one-api/relay/model"
 )
 
-func StreamHandler(c *gin.Context, resp *http.Response, relayMode int) (*model.ErrorWithStatusCode, string) {
+func StreamHandler(c *gin.Context, resp *http.Response, relayMode int) (*model.ErrorWithStatusCode, string, *model.Usage) {
 	responseText := ""
 	scanner := bufio.NewScanner(resp.Body)
 	scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
@@ -32,6 +32,7 @@ func StreamHandler(c *gin.Context, resp *http.Response, relayMode int) (*model.E
 	})
 	dataChan := make(chan string)
 	stopChan := make(chan bool)
+	var usage *model.Usage
 	go func() {
 		for scanner.Scan() {
 			data := scanner.Text()
@@ -73,6 +74,9 @@ func StreamHandler(c *gin.Context, resp *http.Response, relayMode int) (*model.E
 					for _, choice := range streamResponse.Choices {
 						responseText += choice.Delta.Content
 					}
+					if streamResponse.Usage != nil {
+						usage = streamResponse.Usage
+					}
 				case constant.RelayModeCompletions:
 					var streamResponse CompletionsStreamResponse
 					err := json.Unmarshal([]byte(data), &streamResponse)
@@ -105,9 +109,9 @@ func StreamHandler(c *gin.Context, resp *http.Response, relayMode int) (*model.E
 	})
 	err := resp.Body.Close()
 	if err != nil {
-		return ErrorWrapper(err, "close_response_body_failed", http.StatusInternalServerError), ""
+		return ErrorWrapper(err, "close_response_body_failed", http.StatusInternalServerError), "", nil
 	}
-	return nil, responseText
+	return nil, responseText, usage
 }
 
 func Handler(c *gin.Context, resp *http.Response, promptTokens int, modelName string) (*model.ErrorWithStatusCode, *model.Usage) {

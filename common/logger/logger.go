@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	loggerDEBUG = "DEBUG"
 	loggerINFO  = "INFO"
 	loggerWarn  = "WARN"
 	loggerError = "ERR"
@@ -56,6 +57,10 @@ func SysError(s string) {
 	_, _ = fmt.Fprintf(gin.DefaultErrorWriter, "[SYS] %v | %s \n", t.Format("2006/01/02 - 15:04:05"), s)
 }
 
+func Debug(ctx context.Context, msg string) {
+	logHelper(ctx, loggerDEBUG, msg)
+}
+
 func Info(ctx context.Context, msg string) {
 	logHelper(ctx, loggerINFO, msg)
 }
@@ -66,6 +71,10 @@ func Warn(ctx context.Context, msg string) {
 
 func Error(ctx context.Context, msg string) {
 	logHelper(ctx, loggerError, msg)
+}
+
+func Debugf(ctx context.Context, format string, a ...any) {
+	Debug(ctx, fmt.Sprintf(format, a...))
 }
 
 func Infof(ctx context.Context, format string, a ...any) {

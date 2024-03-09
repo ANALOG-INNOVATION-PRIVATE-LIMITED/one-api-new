@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, Label, Pagination, Popup, Table } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { API, showError, showInfo, showSuccess, timestamp2string } from '../helpers';
+import { API, loadChannelModels, showError, showInfo, showSuccess, timestamp2string } from '../helpers';
 
 import { CHANNEL_OPTIONS, ITEMS_PER_PAGE } from '../constants';
 import { renderGroup, renderNumber } from '../helpers/render';
@@ -94,6 +94,7 @@ const ChannelsTable = () => {
       .catch((reason) => {
         showError(reason);
       });
+    loadChannelModels().then();
   }, []);
 
   const manageChannel = async (id, action, idx, value) => {
@@ -521,8 +522,7 @@ const ChannelsTable = () => {
               <Button size='small' loading={loading} onClick={testAllChannels}>
                 测试所有渠道
               </Button>
-              {/*<Button size='small' onClick={updateAllChannelsBalance}*/}
-              {/*        loading={loading || updatingBalance}>更新已启用渠道余额</Button>*/}
+              <Button size='small' onClick={updateAllChannelsBalance} loading={loading || updatingBalance}>更新已启用渠道余额</Button>
               <Popup
                 trigger={
                   <Button size='small' loading={loading}>

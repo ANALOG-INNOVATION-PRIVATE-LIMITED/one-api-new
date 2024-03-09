@@ -14,9 +14,12 @@ import (
 	"net/http/httptest"
 	"net/url"
 
+	"strings"
+
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/config"
 	"github.com/songquanpeng/one-api/common/logger"
+	"github.com/songquanpeng/one-api/middleware"
 	"github.com/songquanpeng/one-api/model"
 	"github.com/songquanpeng/one-api/relay/constant"
 	"github.com/songquanpeng/one-api/relay/helper"
@@ -53,6 +56,7 @@ func testChannel(channel *model.Channel) (err error, openaiErr *relaymodel.Error
 	c.Request.Header.Set("Content-Type", "application/json")
 	c.Set("channel", channel.Type)
 	c.Set("base_url", channel.GetBaseURL())
+	middleware.SetupContextForSelectedChannel(c, channel, "")
 	meta := util.GetRelayMeta(c)
 	apiType := constant.ChannelType2APIType(channel.Type)
 	adaptor := helper.GetAdaptor(apiType)
@@ -61,6 +65,12 @@ func testChannel(channel *model.Channel) (err error, openaiErr *relaymodel.Error
 	}
 	adaptor.Init(meta)
 	modelName := adaptor.GetModelList()[0]
+	if !strings.Contains(channel.Models, modelName) {
+		modelNames := strings.Split(channel.Models, ",")
+		if len(modelNames) > 0 {
+			modelName = modelNames[0]
+		}
+	}
 	request := buildTestRequest()
 	request.Model = modelName
 	meta.OriginModelName, meta.ActualModelName = modelName, modelName

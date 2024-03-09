@@ -72,7 +72,8 @@ func Distribute() func(c *gin.Context) {
 					modelRequest.Model = "whisper-1"
 				}
 			}
-			channel, err = model.CacheGetRandomSatisfiedChannel(userGroup, modelRequest.Model)
+			requestModel = modelRequest.Model
+			channel, err = model.CacheGetRandomSatisfiedChannel(userGroup, modelRequest.Model, false)
 			if err != nil {
 				streamText := "非流式"
 

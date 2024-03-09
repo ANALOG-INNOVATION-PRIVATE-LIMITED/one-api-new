@@ -4,11 +4,17 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/relay/channel/ai360"
+	"github.com/songquanpeng/one-api/relay/channel/baichuan"
+	"github.com/songquanpeng/one-api/relay/channel/minimax"
+	"github.com/songquanpeng/one-api/relay/channel/mistral"
 	"github.com/songquanpeng/one-api/relay/channel/moonshot"
 	"github.com/songquanpeng/one-api/relay/constant"
 	"github.com/songquanpeng/one-api/relay/helper"
 	relaymodel "github.com/songquanpeng/one-api/relay/model"
+	"github.com/songquanpeng/one-api/relay/util"
+	"net/http"
 )
 
 // https://platform.openai.com/docs/api-reference/models/list
@@ -40,6 +46,7 @@ type OpenAIModels struct {
 
 var openAIModels []OpenAIModels
 var openAIModelsMap map[string]OpenAIModels
+var channelId2Models map[int][]string
 
 func init() {
 	var permission []OpenAIModelPermission
@@ -99,10 +106,60 @@ func init() {
 			Parent:     nil,
 		})
 	}
+	for _, modelName := range baichuan.ModelList {
+		openAIModels = append(openAIModels, OpenAIModels{
+			Id:         modelName,
+			Object:     "model",
+			Created:    1626777600,
+			OwnedBy:    "baichuan",
+			Permission: permission,
+			Root:       modelName,
+			Parent:     nil,
+		})
+	}
+	for _, modelName := range minimax.ModelList {
+		openAIModels = append(openAIModels, OpenAIModels{
+			Id:         modelName,
+			Object:     "model",
+			Created:    1626777600,
+			OwnedBy:    "minimax",
+			Permission: permission,
+			Root:       modelName,
+			Parent:     nil,
+		})
+	}
+	for _, modelName := range mistral.ModelList {
+		openAIModels = append(openAIModels, OpenAIModels{
+			Id:         modelName,
+			Object:     "model",
+			Created:    1626777600,
+			OwnedBy:    "mistralai",
+			Permission: permission,
+			Root:       modelName,
+			Parent:     nil,
+		})
+	}
 	openAIModelsMap = make(map[string]OpenAIModels)
 	for _, model := range openAIModels {
 		openAIModelsMap[model.Id] = model
 	}
+	channelId2Models = make(map[int][]string)
+	for i := 1; i < common.ChannelTypeDummy; i++ {
+		adaptor := helper.GetAdaptor(constant.ChannelType2APIType(i))
+		meta := &util.RelayMeta{
+			ChannelType: i,
+		}
+		adaptor.Init(meta)
+		channelId2Models[i] = adaptor.GetModelList()
+	}
+}
+
+func DashboardListModels(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "",
+		"data":    channelId2Models,
+	})
 }
 
 func ListModels(c *gin.Context) {
