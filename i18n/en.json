@@ -970,5 +970,7 @@
   "用以支持通过微信进行登录注册，": "Used to support login and registration via WeChat, ",
   "按照如下格式输入：APIKey-AppId，例如：fastgpt-xxxx-xxxx": "Enter in the following format: APIKey-AppId, for example: fastgpt-xxxx-xxxx",
   "请输入 AZURE_OPENAI_ENDPOINT，例如：https://docs-test-001.openai.azure.com": "Please enter AZURE_OPENAI_ENDPOINT, e.g. https://docs-test-001.openai.azure.com",
-  "补全倍率": "Completion rate"
+  "补全倍率": "Completion rate",
+
+  "百川大模型": "Baichuan AI"
 }
