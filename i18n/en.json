@@ -972,5 +972,18 @@
   "请输入 AZURE_OPENAI_ENDPOINT，例如：https://docs-test-001.openai.azure.com": "Please enter AZURE_OPENAI_ENDPOINT, e.g. https://docs-test-001.openai.azure.com",
   "补全倍率": "Completion rate",
 
-  "百川大模型": "Baichuan AI"
+  "百川大模型": "Baichuan AI",
+  "零一万物": "01 AI",
+
+  "通道 #%d 已被禁用": "Channel #%d has been disabled",
+  "该渠道在最近 %d 次调用中成功率为 %.2f%%，低于阈值 %.2f%%，因此被系统自动禁用。": "The success rate of this channel in the last %d calls is %.2f%%, which is lower than the threshold %.2f%%, so it is automatically disabled by the system.",
+
+  "渠道 %s （%d）测试超时": "Channel %s (%d) test timed out",
+  "已成功开始测试通道，请刷新页面查看结果。": "The channel test has been successfully started, please refresh the page to view the results.",
+  "配置": "Configuration",
+  "用以推送报警信息，": "Used to push alarm information, ",
+  "了解": "to learn more about",
+  "推送地址": "Push address",
+  "访问凭证": "Access credentials",
+  "OpenAI 渠道已经不再支持通过 key 获取余额，因此余额显示为 0。对于支持的渠道类型，请点击余额进行刷新。": "The OpenAI channel no longer supports getting the balance through the key, so the balance is displayed as 0. For supported channel types, please click the balance to refresh."
 }
