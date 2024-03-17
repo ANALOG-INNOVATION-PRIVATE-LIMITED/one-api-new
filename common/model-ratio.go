@@ -2,9 +2,10 @@ package common
 
 import (
 	"encoding/json"
-	"github.com/songquanpeng/one-api/common/logger"
 	"strings"
 	"time"
+
+	"github.com/songquanpeng/one-api/common/logger"
 )
 
 const (
@@ -69,7 +70,7 @@ var ModelRatio = map[string]float64{
 	"claude-instant-1.2":       0.8 / 1000 * USD,
 	"claude-2.0":               8.0 / 1000 * USD,
 	"claude-2.1":               8.0 / 1000 * USD,
-	"claude-3-haiku-20240229":  0.25 / 1000 * USD,
+	"claude-3-haiku-20240307":  0.25 / 1000 * USD,
 	"claude-3-sonnet-20240229": 3.0 / 1000 * USD,
 	"claude-3-opus-20240229":   15.0 / 1000 * USD,
 	// https://cloud.baidu.com/doc/WENXINWORKSHOP/s/hlrk4akp7
@@ -78,6 +79,9 @@ var ModelRatio = map[string]float64{
 	"ERNIE-Bot-4":       0.12 * RMB, // ￥0.12 / 1k tokens
 	"ERNIE-Bot-8k":      0.024 * RMB,
 	"Embedding-V1":      0.1429, // ￥0.002 / 1k tokens
+	"bge-large-zh":      0.002 * RMB,
+	"bge-large-en":      0.002 * RMB,
+	"bge-large-8k":      0.002 * RMB,
 	"PaLM-2":            1,
 	"gemini-pro":        1, // $0.00025 / 1k characters -> $0.001 / 1k tokens
 	"gemini-pro-vision": 1, // $0.00025 / 1k characters -> $0.001 / 1k tokens
@@ -125,6 +129,15 @@ var ModelRatio = map[string]float64{
 	"mistral-medium-latest": 2.7 / 1000 * USD,
 	"mistral-large-latest":  8.0 / 1000 * USD,
 	"mistral-embed":         0.1 / 1000 * USD,
+	// https://wow.groq.com/
+	"llama2-70b-4096":    0.7 / 1000 * USD,
+	"llama2-7b-2048":     0.1 / 1000 * USD,
+	"mixtral-8x7b-32768": 0.27 / 1000 * USD,
+	"gemma-7b-it":        0.1 / 1000 * USD,
+	// https://platform.lingyiwanwu.com/docs#-计费单元
+	"yi-34b-chat-0205": 2.5 / 1000000 * RMB,
+	"yi-34b-chat-200k": 12.0 / 1000000 * RMB,
+	"yi-vl-plus":       6.0 / 1000000 * RMB,
 }
 
 var CompletionRatio = map[string]float64{}
@@ -141,6 +154,26 @@ func init() {
 	for k, v := range CompletionRatio {
 		DefaultCompletionRatio[k] = v
 	}
+}
+
+func AddNewMissingRatio(oldRatio string) string {
+	newRatio := make(map[string]float64)
+	err := json.Unmarshal([]byte(oldRatio), &newRatio)
+	if err != nil {
+		logger.SysError("error unmarshalling old ratio: " + err.Error())
+		return oldRatio
+	}
+	for k, v := range DefaultModelRatio {
+		if _, ok := newRatio[k]; !ok {
+			newRatio[k] = v
+		}
+	}
+	jsonBytes, err := json.Marshal(newRatio)
+	if err != nil {
+		logger.SysError("error marshalling new ratio: " + err.Error())
+		return oldRatio
+	}
+	return string(jsonBytes)
 }
 
 func ModelRatio2JSONString() string {
@@ -209,7 +242,7 @@ func GetCompletionRatio(name string) float64 {
 				return 2
 			}
 		}
-		return 1.333333
+		return 4.0 / 3.0
 	}
 	if strings.HasPrefix(name, "gpt-3.5-turbo-1106") {
 		return 2
@@ -228,6 +261,10 @@ func GetCompletionRatio(name string) float64 {
 	}
 	if strings.HasPrefix(name, "mistral-") {
 		return 3
+	}
+	switch name {
+	case "llama2-70b-4096":
+		return 0.8 / 0.7
 	}
 	return 1
 }

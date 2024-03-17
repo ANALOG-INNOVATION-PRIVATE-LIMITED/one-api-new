@@ -29,12 +29,12 @@ services:
       retries: 3
 
   redis:
-    image: redis:latest
+    image: "${REGISTRY:-docker.io}/redis:latest"
     container_name: redis
     restart: always
 
   db:
-    image: mysql:8.2.0
+    image: "${REGISTRY:-docker.io}/mysql:8.2.0"
     restart: always
     container_name: mysql
     volumes:

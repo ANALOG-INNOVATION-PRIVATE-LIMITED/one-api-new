@@ -33,6 +33,8 @@ const SystemSetting = () => {
     GoogleOAuthEnabled: '',
     GoogleClientId: '',
     GoogleClientSecret: '',
+    MessagePusherAddress: '',
+    MessagePusherToken: '',
     TurnstileCheckEnabled: '',
     TurnstileSiteKey: '',
     TurnstileSecretKey: '',
@@ -220,6 +222,21 @@ const SystemSetting = () => {
       inputs.GoogleClientSecret !== ''
     ) {
       await updateOption('GoogleClientSecret', inputs.GoogleClientSecret);
+    }
+  };
+
+  const submitMessagePusher = async () => {
+    if (originInputs['MessagePusherAddress'] !== inputs.MessagePusherAddress) {
+      await updateOption(
+        'MessagePusherAddress',
+        removeTrailingSlash(inputs.MessagePusherAddress)
+      );
+    }
+    if (
+      originInputs['MessagePusherToken'] !== inputs.MessagePusherToken &&
+      inputs.MessagePusherToken !== ''
+    ) {
+      await updateOption('MessagePusherToken', inputs.MessagePusherToken);
     }
   };
 
@@ -662,6 +679,42 @@ const SystemSetting = () => {
           </Form.Group>
           <Form.Button onClick={submitGoogleOAuth}>
             保存 Google OAuth 设置
+          </Form.Button>
+          <Divider />
+          <Header as='h3'>
+            配置 Message Pusher
+            <Header.Subheader>
+              用以推送报警信息，
+              <a
+                href='https://github.com/songquanpeng/message-pusher'
+                target='_blank' rel="noreferrer"
+              >
+                点击此处
+              </a>
+              了解 Message Pusher
+            </Header.Subheader>
+          </Header>
+          <Form.Group widths={3}>
+            <Form.Input
+              label='Message Pusher 推送地址'
+              name='MessagePusherAddress'
+              placeholder='例如：https://msgpusher.com/push/your_username'
+              onChange={handleInputChange}
+              autoComplete='new-password'
+              value={inputs.MessagePusherAddress}
+            />
+            <Form.Input
+              label='Message Pusher 访问凭证'
+              name='MessagePusherToken'
+              type='password'
+              onChange={handleInputChange}
+              autoComplete='new-password'
+              value={inputs.MessagePusherToken}
+              placeholder='敏感信息不会发送到前端显示'
+            />
+          </Form.Group>
+          <Form.Button onClick={submitMessagePusher}>
+            保存 Message Pusher 设置
           </Form.Button>
           <Divider />
           <Header as='h3'>
